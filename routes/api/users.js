@@ -1,23 +1,20 @@
 const express = require('express');
 
-const {authenticate} = require('../../middlewares')
+const { User } = require('../../models/user');
+const { authenticate } = require('../../middlewares');
 
 const router = express.Router();
 
 router.get('/current', authenticate, async (req, res, next) => {
-    try {
-        console.log(req.user);
-    } catch (error) {
-        next(error);
-    }
+    res.json({
+       email: req.user.email
+   })
 });
 
 router.get('/logout', authenticate, async (req, res, next) => {
-    try {
-        
-    } catch (error) {
-        next(error);
-    }
-});
+    const { _id } = req.user;
+    await User.findByIdAndUpdate(_id, { token: '' });
+    res. status(204).send()
+    });
 
 module.exports = router;
