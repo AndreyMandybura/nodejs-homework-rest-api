@@ -50,7 +50,7 @@ router.post('/users/login', async (req, res, next) => {
             throw new CreateError(401, 'Email or password is wrong')
         }
         const payload = {
-            id:user.contactId
+            id:user._id
         }
         const token = jwt.sign(payload, SECRET_KEY);
         res.json({
