@@ -15,17 +15,18 @@ router.post('/users/signup', async (req, res, next) => {
         if (error) {
             throw new CreateError(400, error.message)
         }
-        const { email, password, subscription, token } = req.body;
+        const { email, password } = req.body;
         const user = await User.findOne({ email });
         if (user) {
             throw new CreateError(409, 'Email in use');
         }
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(password, salt);
-        await User.create({ email, password: hashPassword, subscription, token });
+        const newUser = await User.create({ email, password: hashPassword });
         res.status(201).json({
             user: {
-                email
+                email,
+                subscription: newUser.subscription
             },
     
         })
@@ -57,7 +58,8 @@ router.post('/users/login', async (req, res, next) => {
         res.json({
             token,
             user: {
-                email
+                email,
+                subscription: user.subscription
             }
         })
     } catch (error){
