@@ -8,6 +8,9 @@ const router = express.Router()
 router.get('/', authenticate, async (req, res, next) => {
   try {
     const { page = 1, limit = 20 } = req.query;
+    if (isNaN(page) || isNaN(limit)) {
+      throw new CreateError(400, "Page and limit must be a number")
+    };
     const { _id } = req.user;
     const skip = (page - 1) * limit;
     const result = await Contact.find({ owner: _id },
@@ -22,7 +25,7 @@ router.get('/', authenticate, async (req, res, next) => {
   
 })
 
-router.get('/:contactId', async (req, res, next) => {
+router.get('/:contactId', authenticate, async (req, res, next) => {
   try {
     const { contactId } = req.params;
     const result = await Contact.findById(contactId);
@@ -55,7 +58,7 @@ router.post('/', authenticate, async (req, res, next) => {
   }
 })
 
-router.delete('/:contactId', async (req, res, next) => {
+router.delete('/:contactId', authenticate, async (req, res, next) => {
   try {
     const { contactId } = req.params;
     const result = await Contact.findByIdAndRemove(contactId);
@@ -68,7 +71,7 @@ router.delete('/:contactId', async (req, res, next) => {
   }
 })
 
-router.put('/:contactId', async (req, res, next) => {
+router.put('/:contactId', authenticate, async (req, res, next) => {
   try {
     const { error } = schemas.add.validate(req.body);
     if (error) {
@@ -85,7 +88,7 @@ router.put('/:contactId', async (req, res, next) => {
   }
 })
 
-router.patch('/:contactId', async (req, res, next) => {
+router.patch('/:contactId', authenticate, async (req, res, next) => {
   try {
     const { error } = schemas.updateFavorite.validate(req.body);
     if (error) {
