@@ -27,8 +27,10 @@ router.get('/', authenticate, async (req, res, next) => {
 
 router.get('/:contactId', authenticate, async (req, res, next) => {
   try {
-    const { contactId } = req.params;
-    const result = await Contact.findById(contactId);
+    const result = await Contact.findOne({
+      _id: req.params.contactId,
+      owner: req.user.id,
+    });
     if (!result) {
       throw new CreateError(404, 'Not found');
     }
@@ -60,8 +62,10 @@ router.post('/', authenticate, async (req, res, next) => {
 
 router.delete('/:contactId', authenticate, async (req, res, next) => {
   try {
-    const { contactId } = req.params;
-    const result = await Contact.findByIdAndRemove(contactId);
+    const result = await Contact.findOneAndDelete({
+      _id: req.params.contactId,
+      owner: req.user._id
+    });
     if (!result) {
       throw new CreateError(404, 'Not found');
     }
@@ -77,8 +81,10 @@ router.put('/:contactId', authenticate, async (req, res, next) => {
     if (error) {
       throw new CreateError(400, error.message);
     }
-    const { contactId } = req.params;
-    const result = await Contact.findByIdAndUpdate(contactId, req.body, {new: true});
+    const result = await Contact.findOneAndUpdate({
+      _id: req.params.contactId,
+      owner: req.user._id
+    }, req.body, {new: true});
     if (!result) {
       throw new CreateError(404, 'Not found');
     }
@@ -94,8 +100,10 @@ router.patch('/:contactId', authenticate, async (req, res, next) => {
     if (error) {
       throw new CreateError(400, error.message);
     }
-    const { contactId } = req.params;
-    const result = await Contact.findByIdAndUpdate(contactId, req.body, {new: true});
+    const result = await Contact.findOneAndUpdate({
+      _id: req.params.contactId,
+      owner: req.user._id
+    }, req.body, {new: true});
     if (!result) {
       throw new CreateError(404, 'Not found');
     }
