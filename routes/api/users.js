@@ -29,7 +29,7 @@ router.patch('/avatars', authenticate, upload.single("avatar"), resize, async (r
         const newFileName = `${_id}.${extention}`;
         const resultUpload = path.join(avatarsDir, newFileName);
         await fs.rename(tempUpload, resultUpload);
-        const avatarURL = path.join("avatars", newFileName);
+        const avatarURL = path.join("http://localhost:3000", "public", "avatars", newFileName);
         await User.findByIdAndUpdate(_id, { avatarURL });
         res.json({
             avatarURL
